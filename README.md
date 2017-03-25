@@ -1,4 +1,4 @@
-# Ghost Storage Adapter - Backblace(B2) Cloud
+# Ghost Storage Adapter - Backblaze(B2) Cloud
 This library works with current version of Ghost 0.11+
 
 ## Installation
@@ -12,8 +12,10 @@ cp -r ./node_modules/ghost-storage-adapter-b2 ./content/storage/b2
 
 Via GIT
 ```
-cd content/storage
-git clone git@github.com:martiendt/ghost-storage-adapter-b2.git b2
+mkdir -p ./content/storage/b2
+cd content/storage/b2
+git clone git@github.com:martiendt/ghost-storage-adapter-b2.git .
+npm install
 ```
 
 ## Configuration
