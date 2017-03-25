@@ -1,0 +1,33 @@
+{
+  "name": "ghost-storage-adapter-b2",
+  "version": "1.0.0",
+  "description": "Ghost Storage Adapter - Backblaze(B2) Cloud Storage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:martiendt/ghost-storage-adapter-b2.git"
+  },
+  "keywords": [
+    "ghost",
+    "backblaze",
+    "b2",
+    "cloud",
+    "storage",
+    "adapter",
+    "plugin"
+  ],
+  "author": "Martien DT <martiendt@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martiendt/ghost-storage-adapter-b2/issues"
+  },
+  "homepage": "https://github.com/martiendt/ghost-storage-adapter-b2",
+  "dependencies": {
+    "bluebird": "^3.1.1",
+    "backblaze-b2": "0.9.9",
+    "util": "^0.10.3"
+  }
+}
