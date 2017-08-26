@@ -19,15 +19,15 @@ npm install
 ```
 
 ## Configuration
-Add this in `config.js` file
+Add this in `config."GHOST_ENVIRONMENT".js` file
 ```
-storage: {
-    active: 'b2',
-    'b2': {
-        accountId: 'YOUR_ACCOUNT_ID',
-        bucketId: 'YOUR_BUCKET_ID',
-        bucketName: 'YOUR_BUCKET_NAME',
-        key: 'YOUR_APPLICATION_KEY'
+"storage": {
+    "active": "b2",
+    "b2": {
+        "accountId": "YOUR_ACCOUNT_ID",
+        "bucketId": "YOUR_BUCKET_ID",
+        "bucketName": "YOUR_BUCKET_NAME",
+        "key": "YOUR_APPLICATION_KEY"
     }
 }   
 ```
