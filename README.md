@@ -6,8 +6,8 @@ This library works with current version of Ghost 0.11+
 Via NPM
 ```
 npm install ghost-storage-adapter-b2
-mkdir -p ./content/storage
-cp -r ./node_modules/ghost-storage-adapter-b2 ./content/storage/b2
+mkdir -p ./content/adapters/storage
+cp -r ./node_modules/ghost-storage-adapter-b2 ./content/adapters/storage/b2
 ```
 
 Via GIT
