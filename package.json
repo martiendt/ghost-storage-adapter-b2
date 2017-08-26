@@ -26,8 +26,9 @@
   },
   "homepage": "https://github.com/martiendt/ghost-storage-adapter-b2",
   "dependencies": {
-    "bluebird": "^3.1.1",
-    "backblaze-b2": "0.9.9",
-    "util": "^0.10.3"
+    "bluebird": "^3.5.0",
+    "backblaze-b2": "1.0.2",
+    "util": "^0.10.3",
+    "request": "^2.81.0"
   }
 }
