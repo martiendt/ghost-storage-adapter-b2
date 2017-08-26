@@ -1,95 +1,95 @@
 'use strict';
 
-var fs          = require('fs'),
-    path        = require('path'),
-    Promise     = require('bluebird'),
-    util        = require('util'),
-    B2          = require('backblaze-b2'),
-    errors      = require('../../../core/server/errors'),
-    utils       = require('../../../core/server/utils'),
-    baseStore   = require('../../../core/server/storage/base'),
-    options     = {},
-    bucket;
+var fs = require('fs'),
+    path = require('path'),
+    Promise = require('bluebird'),
+    util = require('util'),
+    B2 = require('backblaze-b2'),
+    BaseStore = require('ghost-storage-base'),
+    request = Promise.promisify(require("request")),
+    readFileAsync = Promise.promisify(fs.readFile);
 
-function BStore(config) {
-    baseStore.call(this);
-    options = config || {};
-    var self = this;
-    self.b2 = new B2({
-        accountId: options.accountId,
-        applicationKey: options.key
-    });
 
-    self.downloadUrl = "";
-    self.bucketId = options.bucketId;
-    self.bucketName = options.bucketName;
-    self.b2.authorize().then(function(data) {
-      self.downloadUrl = data.downloadUrl + '/file/' + self.bucketName + '/';
-    });
+class Store extends BaseStore {
+    constructor(config) {
+        super();
+        var self = this;
+        this.config = config;
+        this.client = new B2({
+            accountId: this.config.accountId,
+            applicationKey: this.config.key
+        });
+
+        this.client.authorize().then((data) => {
+            self.downloadUrl = data.data.downloadUrl + '/file/' + self.config.bucketName + '/';
+        });
+
+        this.targetFilename = "";
+    }
+
+    delete(fileName, targetDir) {
+        return Promise.reject("Not implemented");
+    }
+
+    exists(filename, targetDir) {
+        const filepath = path.join(targetDir || this.getTargetDir(), filename);
+        return request(this.getUrl(filepath))
+            .then(res => (res.statusCode === 200))
+            .catch(() => false);
+    }
+
+    read(options) {
+    }
+
+    save(image, targetDir) {
+        const directory = targetDir || this.getTargetDir(this.pathPrefix)
+        var self = this;
+
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                readFileAsync(image.path),
+                this.getUniqueFileName(image, directory)
+            ])
+            .then(([file, filename]) => {
+                console.log("fileName: " + util.inspect(filename))
+                this.file = file;
+                console.log("fileName: " + util.inspect(this.file))
+                this.targetFilename = filename;
+                self.client.authorize().then((data) => {
+                    console.log("auth success");
+                    console.log("downloadUrl: " +util.inspect(self.downloadUrl));;
+                    self.client.getUploadUrl(self.config.bucketId).then((obj) => {
+                        console.log("uploadUrl: " +util.inspect(obj.data.uploadUrl));
+                        console.log("uploadAuthToken: " +util.inspect(obj.data.authorizationToken));
+                        console.log("filename: " +util.inspect(self.targetFilename));
+                        self.client.uploadFile({
+                            uploadUrl: obj.data.uploadUrl,
+                            uploadAuthToken: obj.data.authorizationToken,
+                            filename: self.targetFilename,
+                            data: this.file
+                        })
+                        .then(() => resolve(`${self.downloadUrl}${self.targetFilename}`))
+                    })
+                })
+
+            })
+            .catch(error => reject(error))
+         })
+    }
+
+    serve() {
+        return (req, res, next) =>
+        {
+            next();
+        }
+        ;
+    }
+
+    getUrl(filename) {
+        const config = this.config;
+        return `${this.host}/${filename}`;
+    }
+
 }
 
-util.inherits(BStore, baseStore);
-
-BStore.prototype.save = function(image) {
-    var _self = this;
-    if (!options) return Promise.reject('b2 cloud storage is not configured');
-
-    var targetDir = _self.getTargetDir(),
-        targetFilename;
-    return Promise.props({
-            data: new Promise(function(resolve, reject) {
-                fs.readFile(image.path, function(err, data) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(data);
-                    }
-                });
-            }),
-            url: this.getUniqueFileName(this, image, targetDir)
-                .then(function(filename) {
-                    targetFilename = filename;
-                    return _self.b2.getUploadUrl(_self.bucketId);
-                })
-        })
-        .then(function(obj) {
-            return _self.b2.uploadFile({
-                uploadUrl: obj.url.uploadUrl,
-                uploadAuthToken: obj.url.authorizationToken,
-                filename: targetFilename,
-                data: obj.data
-            });
-        })
-        .then(function(fn) {
-            return _self.downloadUrl + targetFilename;
-        })
-        .catch(function(e) {});
-};
-
-// middleware for serving the files
-BStore.prototype.serve = function() {
-    // a no-op, these are absolute URLs
-    return function(req, res, next) {
-        next();
-    };
-};
-
-BStore.prototype.exists = function(filename) {
-    return new Promise(function(resolve) {
-        fs.exists(filename, function(exists) {
-            resolve(exists);
-        });
-    });
-};
-
-BStore.prototype.delete = function(filename) {
-    return new Promise(function(resolve, reject) {
-        var file = this.bucket.file(filename);
-        file.delete(function(err, apiResponse) {
-            if (err) { return reject(err); }
-            resolve(apiResponse);
-        });
-    });
-};
-
-module.exports = BStore;
+module.exports = Store;
