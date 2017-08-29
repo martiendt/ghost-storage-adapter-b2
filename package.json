@@ -29,6 +29,7 @@
     "bluebird": "^3.5.0",
     "backblaze-b2": "1.0.2",
     "util": "^0.10.3",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "ghost-storage-base": "^0.0.1"
   }
 }
