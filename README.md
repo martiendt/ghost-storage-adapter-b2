@@ -1,5 +1,9 @@
 # Ghost Storage Adapter - Backblaze(B2) Cloud
-This library works with current version of Ghost 0.11+
+This library works with current version of Ghost 1.x.x
+
+Use version 2.x.x for ghost 1.x.x
+
+Use version 1.x.x for ghost 0.x.x
 
 ## Installation
 
