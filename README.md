@@ -17,7 +17,7 @@ cp -r ./node_modules/ghost-storage-adapter-b2 ./content/adapters/storage/b2
 Via GIT
 ```
 mkdir -p ./content/adapters/storage/b2
-cd content/storage/b2
+cd content/adapters/storage/b2
 git clone git@github.com:martiendt/ghost-storage-adapter-b2.git .
 npm install
 ```
