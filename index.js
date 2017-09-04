@@ -74,7 +74,7 @@ class Store extends BaseStore {
 
             })
             .catch(error => reject(error))
-         })
+        })
     }
 
     serve() {
@@ -82,7 +82,6 @@ class Store extends BaseStore {
         {
             next();
         }
-        ;
     }
 
     getUrl(filename) {
